@@ -8,7 +8,7 @@ class CoinFlipper extends Component {
         maxNumOfFlips: 10,
         coins: [
             { imgSrc: 'https://tinyurl.com/react-coin-heads-jpg', side: 'heads' },
-            { imgSrc: 'https://tinyurl.com/react-coin-tails-jpg', side: 'tails' }
+            { imgSrc: 'http://www.pcgscoinfacts.com/UserImages/71009269r.jpg', side: 'tails' }
         ]
     };
 
@@ -24,6 +24,12 @@ class CoinFlipper extends Component {
     };
 
     flipCoin() {
+        
+        if(this.props.maxNumOfFlips === this.state.timesFliped) {
+            this.reset();
+            return;
+        }
+
         let coin = choice(this.props.coins);
         this.setState(state => ({
             timesFliped: state.timesFliped + 1,
@@ -33,12 +39,20 @@ class CoinFlipper extends Component {
         }));
     };
 
+    reset() {
+        this.setState(state => ({
+            timesFliped: 0,
+            curCoin: null,
+            headFlipCount: 0, 
+            tailFlipCount: 0
+        }));
+    }
+
     handleClick = () => {
         this.flipCoin()    
     };
 
     render() {
-    
         let remaining = (this.props.maxNumOfFlips - this.state.timesFliped);
         return (
             <div>
@@ -48,7 +62,7 @@ class CoinFlipper extends Component {
                         data={this.state.curCoin}
                     />
                 }
-                <button onClick={this.handleClick} disabled={this.state.timesFliped >= 10} >Flip Me!</button>
+                <button onClick={this.handleClick} >Flip Me!</button>
                 <p>
                     {`Out of ${this.state.timesFliped} 
                     flip${this.state.timesFlipped > 1 ? 's':''} there has been 
