@@ -1,11 +1,11 @@
 import React from 'react';
 import './App.css';
-import CoinFlipper from './CoinFlipper';
+import CoinContainer from './CoinContainer';
 
 function App() {
   return (
     <div className="App">
-      <CoinFlipper />
+      <CoinContainer />
     </div>
   );
 }

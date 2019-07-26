@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
 import Coin from './Coin';
+import { choice } from './Helper';
 
 class CoinFlipper extends Component {
    
     static defaultProps = {
-        images: [
-            'https://upload.wikimedia.org/wikipedia/commons/c/cd/S_Half_Dollar_Obverse_2016.jpg',
-            'http://www.pcgscoinfacts.com/UserImages/71009269r.jpg'
-        ],
-        types: [
-            'head', 'tail'
-        ],
-        maxNumOfFlips: 10
+        maxNumOfFlips: 10,
+        coins: [
+            { imgSrc: 'https://tinyurl.com/react-coin-heads-jpg', side: 'heads' },
+            { imgSrc: 'https://tinyurl.com/react-coin-tails-jpg', side: 'tails' }
+        ]
     };
 
     constructor(props){
@@ -19,40 +17,48 @@ class CoinFlipper extends Component {
         this.state = {
             headFlipCount: 0,
             tailFlipCount: 0,
-            activeIndex: 0,
+            curCoin: null,
             timesFliped: 0
         }
         this.handleClick = this.handleClick.bind(this);
     };
 
-    handleClick = () => {
-        let index = Math.round(Math.random() * 1);
-        this.setState((state, props) => ({
+    flipCoin() {
+        let coin = choice(this.props.coins);
+        this.setState(state => ({
             timesFliped: state.timesFliped + 1,
-            activeIndex: state.activeIndex = index,
-            headFlipCount: index === 0 ? state.headFlipCount + 1 : state.headFlipCount, 
-            tailFlipCount: index === 1 ? state.tailFlipCount + 1 : state.tailFlipCount
+            curCoin: coin,
+            headFlipCount: state.headFlipCount + (coin.side === "heads" ? 1 : 0), 
+            tailFlipCount: state.tailFlipCount + (coin.side === "tails" ? 1 : 0)
         }));
+    };
+
+    handleClick = () => {
+        this.flipCoin()    
     };
 
     render() {
     
+        let remaining = (this.props.maxNumOfFlips - this.state.timesFliped);
         return (
             <div>
-                <Coin 
-                    img={this.props.images[this.state.activeIndex]} 
-                    type={this.props.types[this.state.activeIndex]}
-                    timesFlipped={this.state.timesFliped}
-                    head={this.state.headFlipCount}
-                    tail={this.state.tailFlipCount}
-                    maxNumOfFlips={this.props.maxNumOfFlips}
-                />
-                <button onClick={this.handleClick} disabled={this.state.timesFliped >= 10} >Flip Coin</button>
+                {
+                    this.state.curCoin &&
+                    <Coin 
+                        data={this.state.curCoin}
+                    />
+                }
+                <button onClick={this.handleClick} disabled={this.state.timesFliped >= 10} >Flip Me!</button>
+                <p>
+                    {`Out of ${this.state.timesFliped} 
+                    flip${this.state.timesFlipped > 1 ? 's':''} there has been 
+                    ${this.state.headFlipCount} head${this.state.headFlipCount > 1 ? 's':''} 
+                    and ${this.state.tailFlipCount} tail${this.state.tailFlipCount > 1 ? 's':''}. 
+                    remaining ${remaining} flip${remaining > 1 ? 's':''}`}
+                </p>
             </div>
         );
     }
-
-    
 }
 
 export default CoinFlipper;
